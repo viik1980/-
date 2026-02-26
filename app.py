@@ -1,207 +1,243 @@
 import streamlit as st
-import pandas as pd
-import datetime
-import os
-import streamlit.components.v1 as components
+import random
+import time
 
-st.set_page_config(layout="wide", page_title="MAX | Platinum Core")
+st.set_page_config(
+    page_title="Дежурный Макс — Platinum Edition",
+    page_icon="⚡",
+    layout="wide"
+)
 
-DB_FILE = "max_leads_2026.csv"
+# ==============================
+# 🎨 PREMIUM CSS + АНИМАЦИИ
+# ==============================
 
-# ---------------- SAVE ----------------
-def save_lead(fname, lname, phone, email, board, tier):
-    new_data = pd.DataFrame([[ 
-        datetime.datetime.now().strftime("%d.%m.%Y %H:%M"),
-        fname, lname, phone, email, board, tier
-    ]], columns=['Дата','Имя','Фамилия','Телефон','Email','Борт-номер','Пакет'])
-
-    if not os.path.isfile(DB_FILE):
-        new_data.to_csv(DB_FILE, index=False)
-    else:
-        new_data.to_csv(DB_FILE, mode='a', header=False, index=False)
-
-# ---------------- PREMIUM GLOBAL STYLE ----------------
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
 
-.stApp {
-    background:
-    radial-gradient(circle at 20% 20%, #1a1f25 0%, transparent 40%),
-    radial-gradient(circle at 80% 80%, #101418 0%, transparent 40%),
-    #000000;
-    color: #f5f5f5;
-    font-family: 'Orbitron', sans-serif;
+/* ====== Глобальный фон ====== */
+html, body, [class*="css"]  {
+    background: radial-gradient(circle at 20% 20%, #0f2027, #0a0f14 40%, #000000 80%);
+    color: white;
+    font-family: 'Segoe UI', sans-serif;
 }
 
-.title {
-    text-align:center;
-    font-size:5rem;
-    font-weight:900;
-    letter-spacing:8px;
-    background: linear-gradient(90deg,#ffffff,#9e9e9e);
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
+/* ====== Скрываем стандартный Streamlit ====== */
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+header {visibility: hidden;}
+
+/* ====== HERO ====== */
+.hero {
+    text-align: center;
+    padding-top: 60px;
+    padding-bottom: 40px;
 }
 
-.subtitle {
-    text-align:center;
-    color:#8be9fd;
-    letter-spacing:4px;
-    margin-bottom:40px;
+.hero h1 {
+    font-size: 64px;
+    background: linear-gradient(90deg, #00f5ff, #7b2ff7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 10px;
 }
 
-.card-box {
-    backdrop-filter: blur(20px);
-    background: rgba(255,255,255,0.05);
-    border:1px solid rgba(255,255,255,0.1);
-    padding:30px;
-    border-radius:20px;
-    transition:0.3s;
-}
-.card-box:hover {
-    transform: translateY(-5px);
-    background: rgba(255,255,255,0.08);
+.hero p {
+    font-size: 22px;
+    color: #cccccc;
 }
 
-.stButton > button {
-    height:70px;
-    border-radius:20px;
-    font-size:1.2rem;
-    font-weight:700;
-    background:linear-gradient(90deg,#ffffff,#cfd8dc);
-    color:black;
+/* ====== Платиновая карта ====== */
+.card-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
 }
+
+.platinum-card {
+    width: 520px;
+    height: 300px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #e6e6e6, #bfbfbf, #ffffff);
+    box-shadow: 0 0 40px rgba(255,255,255,0.2);
+    padding: 30px;
+    position: relative;
+    overflow: hidden;
+    color: black;
+    transition: 0.4s ease;
+}
+
+.platinum-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 80px rgba(0,255,255,0.4);
+}
+
+.card-title {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.card-number {
+    font-size: 26px;
+    letter-spacing: 3px;
+    margin-top: 40px;
+}
+
+/* ====== Лазер ====== */
+.laser {
+    position: absolute;
+    width: 2px;
+    height: 100%;
+    background: #00ffff;
+    box-shadow: 0 0 20px #00ffff;
+    animation: laserMove 2s linear infinite;
+}
+
+@keyframes laserMove {
+    0% { left: 0; opacity: 0; }
+    10% { opacity: 1; }
+    50% { left: 100%; opacity: 1; }
+    100% { left: 100%; opacity: 0; }
+}
+
+/* ====== Карточки преимуществ ====== */
+.feature-section {
+    margin-top: 100px;
+}
+
+.feature-card {
+    background: linear-gradient(145deg, #111111, #1c1c1c);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 0 30px rgba(0,255,255,0.05);
+    transition: 0.4s ease;
+    height: 100%;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 0 50px rgba(123,47,247,0.4);
+}
+
+.feature-title {
+    font-size: 22px;
+    margin-bottom: 15px;
+    color: #00f5ff;
+}
+
+.feature-text {
+    color: #cccccc;
+}
+
+/* ====== Кнопка ====== */
+.stButton>button {
+    background: linear-gradient(90deg, #00f5ff, #7b2ff7);
+    border: none;
+    border-radius: 12px;
+    height: 50px;
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    transition: 0.3s;
+}
+
+.stButton>button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 30px #00f5ff;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
-# ---------------- HERO ----------------
-st.markdown('<div class="title">DEЖУРНЫЙ MAX</div>', unsafe_allow_html=True)
-st.markdown('<div class="subtitle">PLATINUM ACCESS SYSTEM</div>', unsafe_allow_html=True)
+# ==============================
+# 🔥 HERO
+# ==============================
 
-# ---------------- 3D SCENE (ВСЕГДА ВИДНА) ----------------
-components.html("""
-<!DOCTYPE html>
-<html>
-<head>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<style>
-body { margin:0; overflow:hidden; background:transparent;}
-</style>
-</head>
-<body>
-<script>
+st.markdown("""
+<div class="hero">
+    <h1>Дежурный Макс</h1>
+    <p>Платиновый цифровой ассистент нового поколения</p>
+</div>
+""", unsafe_allow_html=True)
 
-let scene = new THREE.Scene();
-let camera = new THREE.PerspectiveCamera(60, window.innerWidth/500, 0.1, 1000);
-let renderer = new THREE.WebGLRenderer({alpha:true, antialias:true});
-renderer.setSize(window.innerWidth, 500);
-document.body.appendChild(renderer.domElement);
+# ==============================
+# 💎 Генерация уникального номера
+# ==============================
 
-let light = new THREE.PointLight(0xffffff,1.5);
-light.position.set(5,5,5);
-scene.add(light);
+def generate_number():
+    return "MAX-" + str(random.randint(100000, 999999))
 
-let geometry = new THREE.BoxGeometry(5,3,0.2);
-let material = new THREE.MeshPhysicalMaterial({
-    color:0xe5e4e2,
-    metalness:1,
-    roughness:0.2,
-    clearcoat:1
-});
-let card = new THREE.Mesh(geometry,material);
-scene.add(card);
+if "card_number" not in st.session_state:
+    st.session_state.card_number = generate_number()
 
-camera.position.z = 8;
+# ==============================
+# 💳 Платиновая карта + лазер
+# ==============================
 
-// ---------- LASER ----------
-function laserEffect(){
-    let laserGeo = new THREE.CylinderGeometry(0.03,0.03,6);
-    let laserMat = new THREE.MeshBasicMaterial({color:0xff0000});
-    let beam = new THREE.Mesh(laserGeo,laserMat);
-    beam.rotation.z = Math.PI/2;
-    beam.position.y = 1.4;
-    scene.add(beam);
+st.markdown('<div class="card-container">', unsafe_allow_html=True)
 
-    let sparks = [];
-    for(let i=0;i<50;i++){
-        let sparkGeo = new THREE.SphereGeometry(0.03);
-        let sparkMat = new THREE.MeshBasicMaterial({color:0xffaa00});
-        let spark = new THREE.Mesh(sparkGeo,sparkMat);
-        spark.position.set(0,1.4,0);
-        scene.add(spark);
-        sparks.push(spark);
-    }
+st.markdown(f"""
+<div class="platinum-card">
+    <div class="laser"></div>
+    <div class="card-title">PLATINUM ACCESS</div>
+    <div class="card-number">{st.session_state.card_number}</div>
+</div>
+""", unsafe_allow_html=True)
 
-    let pos = -3;
-    let interval = setInterval(()=>{
-        beam.position.x = pos;
-        sparks.forEach(s=>{
-            s.position.x = pos;
-            s.position.y += (Math.random()-0.5)*0.2;
-        });
-        pos+=0.1;
-        if(pos>3){
-            clearInterval(interval);
-            scene.remove(beam);
-            sparks.forEach(s=>scene.remove(s));
-        }
-    },20);
-}
+st.markdown('</div>', unsafe_allow_html=True)
 
-setTimeout(laserEffect,2000);
+st.write("")
+st.write("")
 
-// ---------- ANIMATION ----------
-function animate(){
-    requestAnimationFrame(animate);
-    card.rotation.y += 0.005;
-    renderer.render(scene,camera);
-}
-animate();
+if st.button("⚡ Выжечь новый уникальный номер"):
+    st.session_state.card_number = generate_number()
+    st.experimental_rerun()
 
-</script>
-</body>
-</html>
-""", height=520)
+# ==============================
+# 🚘 Блок преимуществ (как в автосалоне)
+# ==============================
 
-st.divider()
-
-# ---------------- FEATURES ----------------
-st.markdown("## ПРЕИМУЩЕСТВА ПЛАТИНОВОГО ДОСТУПА")
+st.markdown('<div class="feature-section">', unsafe_allow_html=True)
 
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.markdown('<div class="card-box"><h3>ANTI-SHF AI</h3><p>Интеллектуальный контроль РТО. Минимизация штрафов. Автоматический анализ тахографа.</p></div>', unsafe_allow_html=True)
+    st.markdown("""
+    <div class="feature-card">
+        <div class="feature-title">Статус</div>
+        <div class="feature-text">
+        Это не просто сервис. Это цифровой уровень доступа.
+        Ваш персональный интеллект, доступный 24/7.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
 with col2:
-    st.markdown('<div class="card-box"><h3>FATIGUE CONTROL</h3><p>Предиктивная модель усталости. Защита водителя. Безопасность экипажа.</p></div>', unsafe_allow_html=True)
+    st.markdown("""
+    <div class="feature-card">
+        <div class="feature-title">Технология</div>
+        <div class="feature-text">
+        Искусственный интеллект, автоматизация, контроль задач,
+        аналитика и стратегическое мышление — в одном интерфейсе.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
 with col3:
-    st.markdown('<div class="card-box"><h3>ELITE STATUS</h3><p>Закрытый клуб пилотов. Уникальный цифровой ID. Приоритетный доступ к обновлениям.</p></div>', unsafe_allow_html=True)
+    st.markdown("""
+    <div class="feature-card">
+        <div class="feature-title">Эксклюзивность</div>
+        <div class="feature-text">
+        Уникальный цифровой номер.
+        Персональный доступ.
+        Премиальное ощущение будущего.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
-st.divider()
+st.markdown('</div>', unsafe_allow_html=True)
 
-# ---------------- FORM ----------------
-st.markdown("## ВХОД В СИСТЕМУ")
-
-with st.form("reg"):
-    col1, col2 = st.columns(2)
-    with col1:
-        first = st.text_input("Имя")
-        phone = st.text_input("Телефон")
-    with col2:
-        last = st.text_input("Фамилия")
-        email = st.text_input("Email")
-
-    board = st.text_input("Желаемый ID")
-    tier = st.selectbox("Пакет", ["TITAN","HEAVY","STANDARD"])
-
-    submit = st.form_submit_button("АКТИВИРОВАТЬ ДОСТУП")
-
-    if submit:
-        if first and phone and email and board:
-            save_lead(first,last,phone,email,board,tier)
-            st.success(f"Добро пожаловать, MAX-{board}")
-        else:
-            st.error("Заполни все поля")
+st.write("")
+st.write("")
+st.markdown("### Готовы активировать Platinum доступ?")
+st.button("🚀 Активировать")
