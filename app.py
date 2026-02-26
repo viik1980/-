@@ -105,7 +105,7 @@ st.write("\n")
 col_l, col_c, col_r = st.columns([1, 2, 1])
 with col_c:
     # Твоя ссылка вставлена сюда:
-    logo_url = "https://i.postimg.cc/CKZCdVHW/logo.png"
+    logo_url = "https://i.postimg.cc/CLg33k38/image-7.jpg"
     st.markdown(f"""
         <div class="logo-container">
             <img src="{logo_url}" style="width: 100%;">
