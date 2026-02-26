@@ -4,213 +4,189 @@ import datetime
 import os
 import time
 
-# --- ИНИЦИАЛИЗАЦИЯ ---
+# --- СИСТЕМНАЯ КОНФИГУРАЦИЯ ---
 st.set_page_config(page_title="MAX | OPERATION CENTER", page_icon="💠", layout="wide")
 DB_FILE = "max_titan_registry.csv"
 
-# --- ПРЕМИУМ ТЕХНО-ДИЗАЙН ---
+# --- ДИЗАЙН "FUTURE COCKPIT" (CARBON, NEON, DEPTH) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto+Mono:wght@300;400;700&display=swap');
     
+    /* ФОН: Глубокий карбон с динамической сеткой */
     .stApp {
-        background: radial-gradient(circle at 50% 50%, #0d0d0d, #000000);
+        background-color: #050505;
         background-image: 
-            linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)),
-            repeating-linear-gradient(45deg, #111 0px, #111 1px, transparent 1px, transparent 10px);
+            radial-gradient(circle at 50% 50%, rgba(0, 242, 255, 0.05), transparent),
+            linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.95)),
+            repeating-linear-gradient(45deg, #111 0px, #111 2px, #0a0a0a 2px, #0a0a0a 10px);
         color: #f0f0f0;
         font-family: 'Roboto Mono', monospace;
     }
 
-    /* Заголовки в стиле Sci-Fi */
-    .main-title {
-        font-family: 'Orbitron', sans-serif;
-        font-size: 6rem;
-        text-align: center;
-        background: linear-gradient(to bottom, #fff, #444);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        letter-spacing: 15px;
-        margin-bottom: 0px;
-    }
-
-    .section-header {
-        font-family: 'Orbitron', sans-serif;
-        color: #00e5ff;
-        border-left: 5px solid #ff3c00;
-        padding-left: 20px;
-        margin-top: 50px;
-        letter-spacing: 3px;
-        text-transform: uppercase;
-    }
-
-    /* Стеклянные панели (Dark Glass) */
+    /* ЭФФЕКТ СВЕЧЕНИЯ И ГЛУБИНЫ ДЛЯ ПАНЕЛЕЙ */
     .glass-panel {
-        background: rgba(255, 255, 255, 0.03);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        padding: 30px;
+        background: rgba(20, 20, 20, 0.8);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(0, 242, 255, 0.2);
         border-radius: 20px;
-        margin: 15px 0;
-        transition: 0.3s;
+        padding: 35px;
+        margin: 20px 0;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.6), inset 0 0 20px rgba(0, 242, 255, 0.05);
+        transition: 0.4s ease;
     }
     .glass-panel:hover {
-        border-color: #ff3c00;
-        background: rgba(255, 255, 255, 0.05);
+        border-color: #FF4D00;
+        box-shadow: 0 0 30px rgba(255, 77, 0, 0.2), inset 0 0 30px rgba(255, 77, 0, 0.05);
+        transform: translateY(-5px);
     }
 
-    /* Описание фич */
-    .feature-title {
-        color: #ff3c00;
+    /* ЗАГОЛОВОК С ЭФФЕКТОМ ПОДСВЕТКИ */
+    .hero-title {
         font-family: 'Orbitron', sans-serif;
-        font-weight: 700;
-        font-size: 1.2rem;
+        font-size: 7rem;
+        font-weight: 900;
+        text-align: center;
+        background: linear-gradient(180deg, #fff 0%, #444 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: 20px;
         margin-bottom: 10px;
+        filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.3));
     }
 
-    .feature-desc {
-        color: #aaa;
-        font-size: 0.95rem;
-        line-height: 1.6;
+    .neon-text {
+        color: #00F2FF;
+        text-shadow: 0 0 10px rgba(0, 242, 255, 0.7);
+        font-family: 'Orbitron', sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 5px;
     }
 
-    /* Акцент на цитаты */
-    .quote-box {
-        font-style: italic;
-        border-left: 2px solid #555;
-        padding-left: 20px;
-        color: #888;
+    /* ИННОВАЦИОННЫЙ БЛОК (АКЦЕНТ) */
+    .highlight-box {
+        background: linear-gradient(135deg, rgba(255, 77, 0, 0.1), transparent);
+        border-left: 5px solid #FF4D00;
+        padding: 20px;
         margin: 20px 0;
+        border-radius: 0 15px 15px 0;
     }
 
-    /* Форма */
-    .stForm {
-        background: rgba(10, 10, 10, 0.9) !important;
-        border: 2px solid #222 !important;
-        border-radius: 20px !important;
-        padding: 40px !important;
-        box-shadow: 0 50px 100px rgba(0,0,0,0.8) !important;
-    }
-
+    /* КНОПКА ЗАПУСКА */
     .stButton>button {
-        background: linear-gradient(45deg, #ff3c00, #a30000) !important;
+        background: linear-gradient(45deg, #FF4D00, #960000) !important;
         color: white !important;
         font-family: 'Orbitron', sans-serif !important;
-        height: 70px;
+        height: 80px;
         width: 100%;
         font-weight: 900 !important;
         letter-spacing: 5px !important;
         border: none !important;
+        border-radius: 0px !important;
+        clip-path: polygon(5% 0, 100% 0, 95% 100%, 0 100%);
+        box-shadow: 0 10px 40px rgba(255, 77, 0, 0.4) !important;
         transition: 0.5s !important;
     }
+    .stButton>button:hover {
+        box-shadow: 0 0 60px #FF4D00 !important;
+        transform: scale(1.02);
+    }
+
+    hr { border-color: #333; opacity: 0.2; }
     </style>
     """, unsafe_allow_html=True)
 
-# --- HEADER SECTION ---
-st.markdown('<p class="main-title">D.MAX</p>', unsafe_allow_html=True)
-st.markdown('<p style="text-align:center; color:#00e5ff; letter-spacing:8px; font-family:Orbitron;">БОЛЬШЕ, ЧЕМ ИНТЕЛЛЕКТ. ТВОЙ ЦИФРОВОЙ БРОНЕНОСЕЦ.</p>', unsafe_allow_html=True)
+# --- HEADER ---
+st.markdown('<p class="hero-title">MAX</p>', unsafe_allow_html=True)
+st.markdown('<p style="text-align:center;" class="neon-text">WELCOME TO THE NEW WORLD // PHASE: TITAN</p>', unsafe_allow_html=True)
 
-st.write("\n" * 3)
+st.write("\n" * 4)
 
-# --- ОПИСАНИЕ МАКСА (THE BRAIN) ---
-st.markdown('<h2 class="section-header">UNIT 01: КТО ТАКОЙ МАКС?</h2>', unsafe_allow_html=True)
+# --- UNIT 01: THE CORE ALGORITHM ---
+st.markdown('<h2 style="font-family:Orbitron; border-bottom: 1px solid #333; padding-bottom:10px;">[ UNIT 01: ТЕМПОРАЛЬНЫЙ ИНТЕЛЛЕКТ ]</h2>', unsafe_allow_html=True)
 
-col_text, col_img = st.columns([1.5, 1])
-with col_text:
+col_algo, col_viz = st.columns([1.5, 1])
+
+with col_algo:
     st.markdown("""
     <div class="glass-panel">
-        <p class="feature-desc">
-        Макс — это не просто приложение. Это <b>нейронный узел</b> твоего грузовика. Он не спит, не устает и видит дорогу на тысячи километров вперед. 
-        Пока ты держишь руль, Макс берет на себя всю бюрократию, расчеты и языковые барьеры. 
-        Он — твой адвокат перед законом, твой штурман в незнакомых городах и твой личный переводчик в любой стране мира.
+        <h3 style="color:#FF4D00; font-family:Orbitron;">АЛГОРИТМ "CHRONOS"</h3>
+        <p style="font-size:1.1rem; line-height:1.8; color:#ccc;">
+        Это не калькулятор топлива. Это <b>Предиктивный Штурман</b>. Введи километраж, среднюю скорость и рабочие окна — Макс развернет перед тобой 
+        временную карту твоего будущего. Он учитывает <b>Пакет Мобильности</b> и РТО, выстраивая график так, чтобы ты знал: когда спать, 
+        где нажать на газ и успеешь ли ты к цели.
         </p>
-        <div class="quote-box">
-        "Ты управляешь машиной. Макс управляет ситуацией."
+        <div class="highlight-box">
+            <span style="color:#fff; font-weight:bold;">ВИДЕНИЕ В БУДУЩЕЕ:</span> 
+            Система рассчитывает компенсации и паузы за тебя, предсказывая твой статус на 48 часов вперед.
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-# --- ФУНКЦИОНАЛ (THE ARSENAL) ---
-st.markdown('<h2 class="section-header">UNIT 02: ТАКТИЧЕСКИЙ АРСЕНАЛ</h2>', unsafe_allow_html=True)
+with col_viz:
+    st.markdown("""
+    <div class="glass-panel" style="text-align:center;">
+        <p style="color:#00F2FF; font-family:Orbitron; font-size:0.8rem;">ENGINE STATUS: ACTIVE</p>
+        <div style="border: 1px solid #00F2FF; height: 150px; border-radius:10px; display:flex; align-items:center; justify-content:center;">
+            <p style="color:#555; font-size:0.7rem;">[ ГРАФИК ПРОЕКЦИИ РТО - ВИЗУАЛИЗАЦИЯ ]</p>
+        </div>
+        <p style="color:#666; font-size:0.7rem; margin-top:15px;">Макс видит твою усталость еще до того, как ты ее почувствовал.</p>
+    </div>
+    """, unsafe_allow_html=True)
 
-c1, c2, c3 = st.columns(3)
+# --- UNIT 02: SAFETY & BIORHYTHMS ---
+st.write("\n" * 2)
+st.markdown('<h2 style="font-family:Orbitron; border-bottom: 1px solid #333; padding-bottom:10px;">[ UNIT 02: БИОРИТМИЧЕСКИЙ ЩИТ ]</h2>', unsafe_allow_html=True)
+
+c1, c2 = st.columns(2)
 
 with c1:
     st.markdown("""
     <div class="glass-panel">
-        <p class="feature-title">🛡️ УМНЫЙ ТАХОГРАФ</p>
-        <p class="feature-desc">Забудь про калькуляторы и страх штрафов. Макс чувствует время каждой клеткой процессора. РТО под полным контролем в реальном времени.</p>
-    </div>
-    <div class="glass-panel">
-        <p class="feature-title">🧮 ТЕРМИНАЛ РАСЧЕТОВ</p>
-        <p style="color:#aaa;">Умный калькулятор топлива, веса и маршрутных расходов. Ошибка исключена.</p>
+        <h3 style="color:#00F2FF; font-family:Orbitron;">РЕЖИМ "АНТИ-ЗОМБИ"</h3>
+        <p style="color:#aaa;">Ненавидишь ночную езду? Макс перестроит реальность. Система адаптирует график под твои биоритмы. Коэффициент усталости рассчитает идеальное окно: 3 часа сна ночью для рывка, а затем полноценные 9 часов отдыха.</p>
     </div>
     """, unsafe_allow_html=True)
 
 with c2:
     st.markdown("""
     <div class="glass-panel">
-        <p class="feature-title">🌍 ЯЗЫКОВОЙ АГРЕССОР</p>
-        <p class="feature-desc">Нужно вызвать такси в пригороде Лиона или договориться на загрузке в Берлине? Просто скажи суть Максу. Он сам свяжется, объяснит задачу на идеальном французском или немецком и выдаст тебе готовый результат.</p>
-    </div>
-    <div class="glass-panel">
-        <p class="feature-title">🛰️ КАРТОГРАФИЯ DEEP-CORE</p>
-        <p style="color:#aaa;">Слой "Макс" на карте: только проверенные стоянки, безопасные хабы и актуальные запреты.</p>
+        <h3 style="color:#00F2FF; font-family:Orbitron;">ЯЗЫКОВОЙ АГРЕССОР</h3>
+        <p style="color:#aaa;">Макс — твой голос в чужой стране. Опиши суть в двух словах, и Макс сам решит вопрос с такси, загрузкой или полицией на языке той страны, где ты находишься. Ты больше не иностранец. Ты — Владелец Дороги.</p>
     </div>
     """, unsafe_allow_html=True)
 
-with c3:
-    st.markdown("""
-    <div class="glass-panel">
-        <p class="feature-title">🎙️ ГОЛОСОВОЙ ИНТЕРФЕЙС</p>
-        <p class="feature-desc">Руки на руле — Макс на связи. Полное управление голосом. Никакого тыканья в экран на скорости 90 км/ч.</p>
-    </div>
-    <div class="glass-panel">
-        <p class="feature-title">🤖 ПРОДВИНУТЫЙ ИИ</p>
-        <p style="color:#aaa;">Макс обучается твоему стилю езды и предлагает решения еще до того, как возникнет проблема.</p>
-    </div>
-    """, unsafe_allow_html=True)
-
-# --- ПОЧЕМУ МАКС? ---
+# --- UNIT 03: REGISTRATION ---
 st.write("\n" * 4)
-st.markdown('<h2 class="section-header">ПОЧЕМУ ПИЛОТЫ ВЫБИРАЮТ D.MAX?</h2>', unsafe_allow_html=True)
+st.markdown('<p style="text-align:center; font-family:Orbitron; font-size:2rem; letter-spacing:10px; color:#fff;">ИНИЦИАЛИЗАЦИЯ ТИТАНА</p>', unsafe_allow_html=True)
 
-st.markdown("""
-<div style="text-align:center; padding: 40px;">
-    <p style="font-size: 1.5rem; color:#fff; font-family: 'Roboto Mono';">МЫ НЕ ПРОДАЕМ СОФТ. МЫ ПРОДАЕМ СТАТУС И СПОКОЙСТВИЕ.</p>
-    <p style="color:#666;"> Обычные водители пользуются навигаторами. Пилоты D.MAX владеют дорогой.</p>
-</div>
-""", unsafe_allow_html=True)
-
-# --- РЕГИСТРАЦИЯ (REGISTRY) ---
-st.write("\n" * 4)
-st.markdown('<h2 class="section-header">ИНИЦИАЛИЗАЦИЯ В СИСТЕМЕ</h2>', unsafe_allow_html=True)
-
-col_form_center, _ = st.columns([1.5, 1])
+_, col_form_center, _ = st.columns([1, 2, 1])
 
 with col_form_center:
-    with st.form("titan_preorder"):
-        st.markdown("<h3 style='text-align:center; font-family:Orbitron;'>РЕГИСТРАЦИЯ БОРТ-НОМЕРА</h3>", unsafe_allow_html=True)
+    with st.form("titan_id_terminal"):
+        st.markdown("<p style='text-align:center; color:#555;'>ВХОД В НОВЫЙ МИР</p>", unsafe_allow_html=True)
         
-        c1, c2 = st.columns(2)
-        with c1:
+        c_n, c_s = st.columns(2)
+        with c_n:
             name = st.text_input("NAME // ИМЯ")
-            phone = st.text_input("COMMS // ТЕЛЕФОН")
-        with c2:
+            phone = st.text_input("PHONE // ТЕЛЕФОН")
+        with c_s:
             surname = st.text_input("SURNAME // ФАМИЛИЯ")
             email = st.text_input("MAIL // ПОЧТА")
             
         st.write("---")
-        board_id = st.text_input("TITAN ID (001-999)", placeholder="Напр. 077")
-        tier = st.selectbox("STATUS TYPE", ["TITAN (Founder Edition)", "HEAVY (Pro Access)", "STANDARD"])
+        board_id = st.text_input("ID БОРТА (001-999)", placeholder="Напр. 007")
+        tier = st.selectbox("CLASS", ["PLATINUM FOUNDER (Alpha Group)", "TITAN (Pre-order)", "HEAVY (Pro)"])
         
-        if st.form_submit_button("ЗАРЕГИСТРИРОВАТЬ ЭКИПАЖ"):
-            if name and email and phone:
-                st.success(f"ПРОТОКОЛ АКТИВИРОВАН. БОРТ MAX-{board_id} ПРИНЯТ.")
+        if st.form_submit_button("ЗАПУСТИТЬ ДВИГАТЕЛЬ СИСТЕМЫ"):
+            if name and email and board_id:
+                with st.spinner("СИНХРОНИЗАЦИЯ ТЕЛЕМЕТРИИ..."):
+                    time.sleep(2)
+                st.success(f"ПРОТОКОЛ АКТИВИРОВАН. ДОБРО ПОЖАЛОВАТЬ В БУДУЩЕЕ, БОРТ {board_id}!")
                 st.balloons()
             else:
-                st.error("ОШИБКА: ДАННЫЕ НЕПОЛНЫЕ")
+                st.error("КРИТИЧЕСКАЯ ОШИБКА: ДАННЫЕ НЕПОЛНЫЕ")
 
 # --- FOOTER ---
 st.write("\n" * 10)
-st.markdown("<p style='text-align:center; color:#333; font-size: 0.7rem;'>SYSTEM CORE V.2026 // D.MAX PROJECT // ALL RIGHTS RESERVED</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align:center; color:#222; font-size: 0.8rem; letter-spacing:5px;'>D.MAX // THE NEW WORLD // 2026</p>", unsafe_allow_html=True)
