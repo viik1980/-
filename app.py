@@ -1,243 +1,127 @@
 import streamlit as st
-import random
+from streamlit_gsheets import GSheetsConnection
+import pandas as pd
+import datetime
 import time
 
-st.set_page_config(
-    page_title="Дежурный Макс — Platinum Edition",
-    page_icon="⚡",
-    layout="wide"
-)
+# --- ИНИЦИАЛИЗАЦИЯ ---
+st.set_page_config(page_title="D.MAX | CLOUD TERMINAL", page_icon="💠", layout="wide")
 
-# ==============================
-# 🎨 PREMIUM CSS + АНИМАЦИИ
-# ==============================
+# Подключение к Google Таблицам
+conn = st.connection("gsheets", type=GSheetsConnection)
 
+# --- ПРЕМИУМ ДИЗАЙН (КАРБОН + ТЕМНОЕ СТЕКЛО) ---
 st.markdown("""
-<style>
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Roboto+Mono&display=swap');
+    
+    .stApp {
+        background: radial-gradient(circle at 50% 50%, #1a1a1a, #000000);
+        background-image: repeating-linear-gradient(45deg, #111 0px, #111 2px, #0a0a0a 2px, #0a0a0a 10px);
+        color: #f0f0f0;
+    }
 
-/* ====== Глобальный фон ====== */
-html, body, [class*="css"]  {
-    background: radial-gradient(circle at 20% 20%, #0f2027, #0a0f14 40%, #000000 80%);
-    color: white;
-    font-family: 'Segoe UI', sans-serif;
-}
+    .glass-card {
+        background: rgba(20, 20, 20, 0.7);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.8);
+    }
 
-/* ====== Скрываем стандартный Streamlit ====== */
-#MainMenu {visibility: hidden;}
-footer {visibility: hidden;}
-header {visibility: hidden;}
+    .hero-title {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 5rem;
+        text-align: center;
+        background: linear-gradient(180deg, #fff, #555);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: 12px;
+    }
 
-/* ====== HERO ====== */
-.hero {
-    text-align: center;
-    padding-top: 60px;
-    padding-bottom: 40px;
-}
+    .stButton>button {
+        background: linear-gradient(45deg, #ff3c00, #a30000) !important;
+        color: white !important;
+        font-family: 'Orbitron', sans-serif !important;
+        height: 65px;
+        border-radius: 10px !important;
+        border: none !important;
+        font-weight: 900 !important;
+        letter-spacing: 3px !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
-.hero h1 {
-    font-size: 64px;
-    background: linear-gradient(90deg, #00f5ff, #7b2ff7);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 10px;
-}
+# --- ГЛАВНЫЙ ЭКРАН ---
+st.markdown('<p class="hero-title">D.MAX</p>', unsafe_allow_html=True)
+st.markdown('<p style="text-align:center; color:#00e5ff; font-family:Orbitron;">CLOUD PILOT REGISTRY // VER 2.6</p>', unsafe_allow_html=True)
 
-.hero p {
-    font-size: 22px;
-    color: #cccccc;
-}
+col_info, col_form = st.columns([1, 1.2], gap="large")
 
-/* ====== Платиновая карта ====== */
-.card-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 50px;
-}
-
-.platinum-card {
-    width: 520px;
-    height: 300px;
-    border-radius: 20px;
-    background: linear-gradient(135deg, #e6e6e6, #bfbfbf, #ffffff);
-    box-shadow: 0 0 40px rgba(255,255,255,0.2);
-    padding: 30px;
-    position: relative;
-    overflow: hidden;
-    color: black;
-    transition: 0.4s ease;
-}
-
-.platinum-card:hover {
-    transform: scale(1.03);
-    box-shadow: 0 0 80px rgba(0,255,255,0.4);
-}
-
-.card-title {
-    font-size: 22px;
-    font-weight: bold;
-}
-
-.card-number {
-    font-size: 26px;
-    letter-spacing: 3px;
-    margin-top: 40px;
-}
-
-/* ====== Лазер ====== */
-.laser {
-    position: absolute;
-    width: 2px;
-    height: 100%;
-    background: #00ffff;
-    box-shadow: 0 0 20px #00ffff;
-    animation: laserMove 2s linear infinite;
-}
-
-@keyframes laserMove {
-    0% { left: 0; opacity: 0; }
-    10% { opacity: 1; }
-    50% { left: 100%; opacity: 1; }
-    100% { left: 100%; opacity: 0; }
-}
-
-/* ====== Карточки преимуществ ====== */
-.feature-section {
-    margin-top: 100px;
-}
-
-.feature-card {
-    background: linear-gradient(145deg, #111111, #1c1c1c);
-    border-radius: 20px;
-    padding: 30px;
-    box-shadow: 0 0 30px rgba(0,255,255,0.05);
-    transition: 0.4s ease;
-    height: 100%;
-}
-
-.feature-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 0 50px rgba(123,47,247,0.4);
-}
-
-.feature-title {
-    font-size: 22px;
-    margin-bottom: 15px;
-    color: #00f5ff;
-}
-
-.feature-text {
-    color: #cccccc;
-}
-
-/* ====== Кнопка ====== */
-.stButton>button {
-    background: linear-gradient(90deg, #00f5ff, #7b2ff7);
-    border: none;
-    border-radius: 12px;
-    height: 50px;
-    font-size: 18px;
-    font-weight: bold;
-    color: white;
-    transition: 0.3s;
-}
-
-.stButton>button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 30px #00f5ff;
-}
-
-</style>
-""", unsafe_allow_html=True)
-
-# ==============================
-# 🔥 HERO
-# ==============================
-
-st.markdown("""
-<div class="hero">
-    <h1>Дежурный Макс</h1>
-    <p>Платиновый цифровой ассистент нового поколения</p>
-</div>
-""", unsafe_allow_html=True)
-
-# ==============================
-# 💎 Генерация уникального номера
-# ==============================
-
-def generate_number():
-    return "MAX-" + str(random.randint(100000, 999999))
-
-if "card_number" not in st.session_state:
-    st.session_state.card_number = generate_number()
-
-# ==============================
-# 💳 Платиновая карта + лазер
-# ==============================
-
-st.markdown('<div class="card-container">', unsafe_allow_html=True)
-
-st.markdown(f"""
-<div class="platinum-card">
-    <div class="laser"></div>
-    <div class="card-title">PLATINUM ACCESS</div>
-    <div class="card-number">{st.session_state.card_number}</div>
-</div>
-""", unsafe_allow_html=True)
-
-st.markdown('</div>', unsafe_allow_html=True)
-
-st.write("")
-st.write("")
-
-if st.button("⚡ Выжечь новый уникальный номер"):
-    st.session_state.card_number = generate_number()
-    st.experimental_rerun()
-
-# ==============================
-# 🚘 Блок преимуществ (как в автосалоне)
-# ==============================
-
-st.markdown('<div class="feature-section">', unsafe_allow_html=True)
-
-col1, col2, col3 = st.columns(3)
-
-with col1:
+with col_info:
     st.markdown("""
-    <div class="feature-card">
-        <div class="feature-title">Статус</div>
-        <div class="feature-text">
-        Это не просто сервис. Это цифровой уровень доступа.
-        Ваш персональный интеллект, доступный 24/7.
-        </div>
+    <div class="glass-card">
+        <h3 style="font-family:Orbitron; color:#ff3c00;">ALPHA-GROUP TESTERS</h3>
+        <p>Первые 10 пилотов, прошедших верификацию, получают пожизненный статус <b>PLATINUM FOUNDER</b>.</p>
+        <hr style="opacity:0.1">
+        <p><b>Что это дает:</b></p>
+        <ul style="color:#aaa; font-size:0.9rem;">
+            <li>Уникальный "хромированный" интерфейс в приложении.</li>
+            <li>Отсутствие абонентской платы навсегда.</li>
+            <li>Прямой доступ к разработчикам (Максу).</li>
+        </ul>
     </div>
     """, unsafe_allow_html=True)
 
-with col2:
-    st.markdown("""
-    <div class="feature-card">
-        <div class="feature-title">Технология</div>
-        <div class="feature-text">
-        Искусственный интеллект, автоматизация, контроль задач,
-        аналитика и стратегическое мышление — в одном интерфейсе.
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+with col_form:
+    with st.form("google_form"):
+        st.markdown("<h3 style='text-align:center; font-family:Orbitron;'>АНКЕТА ПИЛОТА</h3>", unsafe_allow_html=True)
+        
+        c1, c2 = st.columns(2)
+        with c1:
+            name = st.text_input("ИМЯ")
+            phone = st.text_input("ТЕЛЕФОН")
+        with c2:
+            surname = st.text_input("ФАМИЛИЯ")
+            email = st.text_input("EMAIL")
+            
+        board_id = st.text_input("ЖЕЛАЕМЫЙ ID (001-999)", placeholder="777")
+        tier = st.selectbox("ПАКЕТ", ["TITAN (Pre-order)", "HEAVY (Pro)", "STANDARD"])
+        
+        if st.form_submit_button("ОТПРАВИТЬ ДАННЫЕ В СИСТЕМУ"):
+            if name and email and phone:
+                try:
+                    # Читаем текущие данные из Google Sheets
+                    existing_data = conn.read(worksheet="Sheet1", usecols=list(range(8)), ttl=0)
+                    
+                    # Создаем новую строку
+                    new_entry = pd.DataFrame([{
+                        "Дата": datetime.datetime.now().strftime("%d.%m.%Y %H:%M"),
+                        "Имя": name,
+                        "Фамилия": surname,
+                        "Телефон": phone,
+                        "Email": email,
+                        "Борт-номер": board_id,
+                        "Пакет": tier,
+                        "Статус": "В ОЖИДАНИИ" # По умолчанию
+                    }])
+                    
+                    # Соединяем и записываем обратно
+                    updated_data = pd.concat([existing_data, new_entry], ignore_index=True)
+                    conn.update(worksheet="Sheet1", data=updated_data)
+                    
+                    st.success("ДАННЫЕ ЗАПИСАНЫ В ОБЛАКО. ВЫ В СПИСКЕ!")
+                    st.balloons()
+                except Exception as e:
+                    st.error(f"ОШИБКА ПОДКЛЮЧЕНИЯ: {e}")
+            else:
+                st.warning("ЗАПОЛНИТЕ ВСЕ ПОЛЯ")
 
-with col3:
-    st.markdown("""
-    <div class="feature-card">
-        <div class="feature-title">Эксклюзивность</div>
-        <div class="feature-text">
-        Уникальный цифровой номер.
-        Персональный доступ.
-        Премиальное ощущение будущего.
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-st.markdown('</div>', unsafe_allow_html=True)
-
-st.write("")
-st.write("")
-st.markdown("### Готовы активировать Platinum доступ?")
-st.button("🚀 Активировать")
+# --- АДМИНКА ---
+st.write("\n" * 10)
+with st.expander("🔐 КЕРНЕЛ-ДОСТУП (Для тебя)"):
+    if st.text_input("Password", type="password") == "max_vip":
+        data = conn.read(worksheet="Sheet1", ttl=0)
+        st.write("### ЖИВОЙ СПИСОК ПИЛОТОВ")
+        st.dataframe(data)
