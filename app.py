@@ -247,27 +247,22 @@ col_text, col_form = st.columns([1, 1.6], gap="large")
 
 with col_text:
     st.write("\n" * 2)
-    st.markdown("""
-    <div style="
-        background: linear-gradient(135deg, rgba(40,40,40,0.9), rgba(10,10,10,1));
-        padding: 30px;
-        border-left: 4px solid #ff3c00;
-        clip-path: polygon(0 0, 100% 0, 100% 95%, 90% 100%, 0 100%);
-        box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
-    ">
-        <h4 style="font-family: Orbitron; color: #ff3c00; margin-top: 0;">ВНИМАНИЕ ЭКИПАЖУ</h4>
-        <p style="font-size: 0.95rem; line-height: 1.6;">Вы получаете доступ к профессиональному оборудованию, а не к игрушке. Ввод данных означает готовность к работе в системе нового поколения.</p>
-        
-        <div style="margin-top: 25px; border-top: 1px solid #333; padding-top: 15px;">
-            <p style="font-family: Orbitron; color: #00e5ff; font-size: 1rem;">ПРИВИЛЕГИИ СТАТУСА TITAN:</p>
-            <ul style="font-size: 0.9rem; color: #aaa; list-style-type: square;">
-                <li><span style="color:#ff3c00;">[ID]</span> Закрепление уникального цифрового позывного навечно.</li>
-                <li><span style="color:#ff3c00;">[$]</span> Фиксация стоимости владения до релиза.</li>
-                <li><span style="color:#ff3c00;">[AI]</span> Приоритетный доступ к нейросетевым функциям.</li>
-            </ul>
-        </div>
+    
+    html_content = """
+<div style="background: linear-gradient(135deg, rgba(40,40,40,0.9), rgba(10,10,10,1)); padding: 30px; border-left: 4px solid #ff3c00; clip-path: polygon(0 0, 100% 0, 100% 95%, 90% 100%, 0 100%); box-shadow: inset 0 0 30px rgba(0,0,0,0.8);">
+    <h4 style="font-family: Orbitron; color: #ff3c00; margin-top: 0;">ВНИМАНИЕ ЭКИПАЖУ</h4>
+    <p style="font-size: 0.95rem; line-height: 1.6;">Вы получаете доступ к профессиональному оборудованию, а не к игрушке. Ввод данных означает готовность к работе в системе нового поколения.</p>
+    <div style="margin-top: 25px; border-top: 1px solid #333; padding-top: 15px;">
+        <p style="font-family: Orbitron; color: #00e5ff; font-size: 1rem;">ПРИВИЛЕГИИ СТАТУСА TITAN:</p>
+        <ul style="font-size: 0.9rem; color: #aaa; list-style-type: square; padding-left: 20px;">
+            <li><span style="color:#ff3c00;">[ID]</span> Закрепление уникального цифрового позывного навечно.</li>
+            <li><span style="color:#ff3c00;">[$]</span> Фиксация стоимости владения до релиза.</li>
+            <li><span style="color:#ff3c00;">[AI]</span> Приоритетный доступ к нейросетевым функциям.</li>
+        </ul>
     </div>
-    """, unsafe_allow_html=True)
+</div>
+"""
+    st.markdown(html_content, unsafe_allow_html=True)
 
 with col_form:
     with st.form("main_form"):
